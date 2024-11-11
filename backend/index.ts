@@ -1,14 +1,28 @@
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
+import cors from 'cors';
 import gameRoutes from './src/routes/gameRoutes';
 
 const app = express();
+
+// Enable CORS
+app.use(cors({
+  origin: 'http://localhost:3000', // Your frontend URL (adjust as needed)
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
+}));
+
 app.use(express.json());
 app.use('/game', gameRoutes);
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000', // Allowing CORS for socket.io
+    methods: ['GET', 'POST'],
+  }
+});
 
 let currentGame: any = null; // Store the current game instance
 
