@@ -1,54 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { io, Socket } from 'socket.io-client';
-
-// Define the data shape for gameStarted event
-interface GameStartedData {
-  player1: string;
-  player2: string;
-}
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';  // Import Link for routing
 
 const Hero: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
-  const [socket, setSocket] = useState<Socket | null>(null); // Type for socket connection
 
-  // Establish socket connection on component mount
-  useEffect(() => {
-    const newSocket = io('http://localhost:3000'); // Ensure this points to your backend
-    setSocket(newSocket);
-  
-    newSocket.on('gameStarted', (data: GameStartedData) => {
+  // Simulate game start after clicking the "Play Online" button
+  const handlePlayOnlineClick = () => {
+    setIsLoading(true);
+    setGameStarted(false); // Reset game start state
+
+    // Simulate a delay (like waiting for another player) and then start the game
+    setTimeout(() => {
       setGameStarted(true);
       setIsLoading(false);
-      console.log(`Game started with players: ${data.player1} and ${data.player2}`);
-    });
-  
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
-  
-
-  // Handle play online button click
-  const handlePlayOnlineClick = () => {
-    if (!socket) return;
-    setIsLoading(true);
-    setGameStarted(false); // Reset the game start state
-
-    const player1 = 'Player 1'; // Replace with dynamic player data
-    const player2 = 'Player 2'; // Replace with dynamic player data
-
-    // Emit the startGame event with player data
-    socket.emit('startGame', { player1, player2 });
-
-    // After emitting, we will wait for the 'gameStarted' event from the server
+    }, 3000);  // Simulate a 3-second delay for game start
   };
 
   return (
-    <div>
-      <div className="min-h-screen flex justify-center items-center text-white bg-stone-800">
-        <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
+    <div className="flex min-h-screen justify-center items-center bg-stone-800">
+      {/* Main content area */}
+      <div className="flex">
+        <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center text-white">
           {/* Replace with an actual image */}
           <img
             src="your-image-source.jpg"
@@ -98,6 +71,6 @@ const Hero: React.FC = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Hero;
